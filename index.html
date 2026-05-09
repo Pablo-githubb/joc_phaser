@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- SEO: Títol i descripció del joc -->
+  <title>Shadow Heist — Joc de Sigil 2D</title>
+  <meta name="description" content="Shadow Heist: Un emocionant joc 2D de sigil i robatori. Infiltra't en edificis, evita guardes i càmeres, i roba el botí!" />
+  <meta name="keywords" content="joc, stealth, phaser, 2D, robatori, sigil" />
+  <meta name="author" content="Shadow Heist Team" />
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <!-- Google Font per a la UI del joc -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+  <!-- Full d'estils extern -->
+  <link rel="stylesheet" href="/estils.css" />
+</head>
+<body>
+  <!-- Pantalla de càrrega HTML (es mostra mentre Phaser carrega) -->
+  <div id="loading-screen">
+    <h1>SHADOW HEIST</h1>
+    <div class="loading-dots">
+      <span>.</span><span>.</span><span>.</span>
+    </div>
+  </div>
+
+  <!-- Contenidor on Phaser renderitzarà el canvas del joc -->
+  <div id="game-container"></div>
+
+  <!-- Punt d'entrada del joc -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

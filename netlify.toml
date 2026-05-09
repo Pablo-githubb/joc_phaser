@@ -1,0 +1,19 @@
+# Configuració de Netlify per al desplegament del joc
+[build]
+  # Comanda per generar el build de producció
+  command = "npm run build"
+  # Directori que Netlify publicarà
+  publish = "dist"
+
+# Capçaleres de seguretat i rendiment
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+
+# Redirecció de totes les rutes al index.html (SPA)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
