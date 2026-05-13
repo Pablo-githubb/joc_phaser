@@ -43,13 +43,13 @@ export default class Guard extends Phaser.Physics.Arcade.Sprite {
       s.anims.create({ key: 'guard-idle', frames: s.anims.generateFrameNumbers('guard-sprite', { start: 0, end: 1 }), frameRate: 2, repeat: -1 });
     }
     if (!s.anims.exists('guard-walk')) {
-      s.anims.create({ key: 'guard-walk', frames: s.anims.generateFrameNumbers('guard-sprite', { start: 2, end: 5 }), frameRate: 6, repeat: -1 });
+      s.anims.create({ key: 'guard-walk', frames: s.anims.generateFrameNumbers('guard-sprite', { start: 2, end: 7 }), frameRate: 8, repeat: -1 });
     }
     if (!s.anims.exists('guard-alert')) {
-      s.anims.create({ key: 'guard-alert', frames: s.anims.generateFrameNumbers('guard-sprite', { start: 6, end: 7 }), frameRate: 4, repeat: -1 });
+      s.anims.create({ key: 'guard-alert', frames: s.anims.generateFrameNumbers('guard-sprite', { start: 8, end: 9 }), frameRate: 4, repeat: -1 });
     }
     if (!s.anims.exists('guard-knockout')) {
-      s.anims.create({ key: 'guard-knockout', frames: s.anims.generateFrameNumbers('guard-sprite', { start: 8, end: 9 }), frameRate: 1, repeat: 0 });
+      s.anims.create({ key: 'guard-knockout', frames: s.anims.generateFrameNumbers('guard-sprite', { start: 10, end: 13 }), frameRate: 6, repeat: 0 });
     }
     this.play('guard-walk');
   }

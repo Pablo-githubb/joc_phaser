@@ -66,12 +66,12 @@ export default class PreloadScene extends Phaser.Scene {
   }
 
   /**
-   * Genera el spritesheet del jugador (10 frames de 32x48px)
-   * Frames: 0-1 idle, 2-5 walk, 6-7 climb, 8-9 knockout
+   * Genera el spritesheet del jugador (14 frames de 32x48px)
+   * Frames: 0-1 idle, 2-7 sneak walk, 8-9 climb, 10-11 interact, 12-13 knockout
    */
   generatePlayerSprite() {
     const canvas = document.createElement('canvas');
-    const fw = 32, fh = 48, frames = 10;
+    const fw = 32, fh = 48, frames = 14;
     canvas.width = fw * frames;
     canvas.height = fh;
     const ctx = canvas.getContext('2d');
@@ -86,62 +86,130 @@ export default class PreloadScene extends Phaser.Scene {
 
   /** Dibuixa un frame del jugador */
   drawPlayerFrame(ctx, ox, frame) {
-    // Cos del jugador (vestit negre de lladre)
-    ctx.fillStyle = '#1a1a2e';
+    const isSneaking = (frame >= 2 && frame <= 7);
+    const isClimbing = (frame >= 8 && frame <= 9);
+    const isInteracting = (frame >= 10 && frame <= 11);
+    const isKnocking = (frame >= 12 && frame <= 13);
+    
+    // Postura encorvada (Bob)
+    const hunch = isSneaking ? 4 : (isInteracting ? 2 : 0);
+    const breath = (frame === 0 || frame === 1) ? (frame * 1) : 0; // Respiració idle
 
-    // Cap amb passamuntanyes
-    ctx.fillStyle = '#222244';
-    ctx.fillRect(ox + 10, 4, 12, 12);
-    // Ulls (brillants)
-    ctx.fillStyle = '#64b5f6';
-    ctx.fillRect(ox + 12, 8, 3, 3);
-    ctx.fillRect(ox + 18, 8, 3, 3);
+    // Cos (camisa verda a ratlles / fosca)
+    ctx.fillStyle = '#1e3d2f'; // verd fosc
+    ctx.fillRect(ox + 8, 16 + hunch + breath, 16, 16);
+    // Ratlles de la camisa
+    ctx.fillStyle = '#112211';
+    ctx.fillRect(ox + 8, 18 + hunch + breath, 16, 2);
+    ctx.fillRect(ox + 8, 22 + hunch + breath, 16, 2);
+    ctx.fillRect(ox + 8, 26 + hunch + breath, 16, 2);
 
-    // Cos
-    ctx.fillStyle = '#1a1a2e';
-    const bodyOffset = (frame >= 2 && frame <= 5) ? Math.sin(frame * 0.8) * 1 : 0;
-    ctx.fillRect(ox + 8, 16 + bodyOffset, 16, 18);
+    // Cap (passamuntanyes negre amb antifaç verd)
+    ctx.fillStyle = '#111';
+    // Si camina d'amagat, avança una mica el cap
+    const headX = isSneaking ? 2 : 0;
+    ctx.fillRect(ox + 10 + headX, 4 + hunch + breath, 12, 12);
+    
+    // Antifaç i ulls
+    ctx.fillStyle = '#225533';
+    ctx.fillRect(ox + 10 + headX, 7 + hunch + breath, 12, 5);
+    ctx.fillStyle = '#ffffff'; // Ulls blancs
+    ctx.fillRect(ox + 13 + headX, 8 + hunch + breath, 2, 2);
+    ctx.fillRect(ox + 17 + headX, 8 + hunch + breath, 2, 2);
 
-    // Cinturó d'eines
-    ctx.fillStyle = '#555577';
-    ctx.fillRect(ox + 8, 28, 16, 3);
-
-    // Cames (animació de caminar)
-    ctx.fillStyle = '#16213e';
-    if (frame >= 2 && frame <= 5) {
-      // Animació de cames caminant
-      const legOff = Math.sin(frame * 1.5) * 4;
-      ctx.fillRect(ox + 10, 34, 5, 12);
-      ctx.fillRect(ox + 17 + legOff, 34, 5, 12);
-    } else if (frame >= 6 && frame <= 7) {
-      // Pujant escales
-      const climbOff = frame === 6 ? -2 : 2;
-      ctx.fillRect(ox + 10, 34 + climbOff, 5, 10);
-      ctx.fillRect(ox + 17, 34 - climbOff, 5, 10);
-    } else if (frame >= 8) {
-      // Noquejant (braç estès)
-      ctx.fillRect(ox + 10, 34, 5, 12);
-      ctx.fillRect(ox + 17, 34, 5, 12);
-      ctx.fillStyle = '#64b5f6';
-      ctx.fillRect(ox + 24, 18, 6, 4); // Puny
+    // Braços i mans
+    ctx.fillStyle = '#1e3d2f';
+    if (isSneaking) {
+      // Braços balancejant sigilosament
+      const armOff = Math.sin(frame * Math.PI) * 3;
+      ctx.fillRect(ox + 6 + armOff, 18 + hunch, 4, 10);
+      ctx.fillRect(ox + 22 - armOff, 18 + hunch, 4, 10);
+      ctx.fillStyle = '#d4a574'; // mans
+      ctx.fillRect(ox + 6 + armOff, 28 + hunch, 3, 3);
+      ctx.fillRect(ox + 22 - armOff, 28 + hunch, 3, 3);
+    } else if (isInteracting) {
+      // Braços estesos manipulant (forçant pany)
+      const pickOff = frame === 10 ? 0 : 2;
+      ctx.fillRect(ox + 18, 18 + hunch, 8, 4);
+      ctx.fillStyle = '#d4a574';
+      ctx.fillRect(ox + 26, 18 + hunch, 3, 3);
+      ctx.fillStyle = '#aaa'; // Eina
+      ctx.fillRect(ox + 28, 19 + hunch - pickOff, 4, 1);
+    } else if (isKnocking) {
+      // Puñetazo dramàtic
+      const punchEx = frame === 12 ? 4 : 8;
+      ctx.fillRect(ox + 18, 18, 8 + punchEx, 4);
+      ctx.fillStyle = '#d4a574';
+      ctx.fillRect(ox + 26 + punchEx, 17, 5, 5); // Puny gran
+    } else if (isClimbing) {
+      // Braços amunt
+      const climbArm = frame === 8 ? -2 : 2;
+      ctx.fillRect(ox + 6, 8 + climbArm, 4, 10);
+      ctx.fillRect(ox + 22, 8 - climbArm, 4, 10);
+      ctx.fillStyle = '#d4a574';
+      ctx.fillRect(ox + 6, 5 + climbArm, 4, 3);
+      ctx.fillRect(ox + 22, 5 - climbArm, 4, 3);
     } else {
       // Idle
-      ctx.fillRect(ox + 10, 34, 5, 12);
-      ctx.fillRect(ox + 17, 34, 5, 12);
+      ctx.fillRect(ox + 6, 18 + breath, 4, 12);
+      ctx.fillRect(ox + 22, 18 + breath, 4, 12);
+      ctx.fillStyle = '#d4a574';
+      ctx.fillRect(ox + 6, 30 + breath, 3, 3);
+      ctx.fillRect(ox + 22, 30 + breath, 3, 3);
     }
 
-    // Sabates
-    ctx.fillStyle = '#333355';
-    ctx.fillRect(ox + 9, 44, 6, 3);
-    ctx.fillRect(ox + 17, 44, 6, 3);
+    // Cinturó
+    ctx.fillStyle = '#332211';
+    ctx.fillRect(ox + 8, 30 + hunch + breath, 16, 3);
+    // Bossa de botí darrere (característica de lladre)
+    ctx.fillStyle = '#554422';
+    ctx.beginPath();
+    ctx.arc(ox + 6, 26 + hunch + breath, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Cames (Pantalons marrons foscos)
+    ctx.fillStyle = '#221100';
+    if (isSneaking) {
+      // Animació de caminar de puntetes (6 frames: 2 a 7)
+      // frame 2,3,4,5,6,7 -> cycle 0 to 5
+      const step = (frame - 2);
+      // Moviment suau de cames
+      const leg1Y = step === 1 || step === 2 ? -2 : 0;
+      const leg2Y = step === 4 || step === 5 ? -2 : 0;
+      const leg1X = Math.sin(step * Math.PI / 3) * 4;
+      const leg2X = -Math.sin(step * Math.PI / 3) * 4;
+      
+      ctx.fillRect(ox + 12 + leg1X, 33 + leg1Y, 4, 12 - leg1Y);
+      ctx.fillRect(ox + 16 + leg2X, 33 + leg2Y, 4, 12 - leg2Y);
+      
+      // Sabates negres de puntetes
+      ctx.fillStyle = '#111';
+      ctx.fillRect(ox + 12 + leg1X, 43 + leg1Y, 6, 3);
+      ctx.fillRect(ox + 16 + leg2X, 43 + leg2Y, 6, 3);
+    } else if (isClimbing) {
+      const climbLeg = frame === 8 ? -3 : 3;
+      ctx.fillRect(ox + 10, 33 + climbLeg, 4, 12 - climbLeg);
+      ctx.fillRect(ox + 18, 33 - climbLeg, 4, 12 + climbLeg);
+      ctx.fillStyle = '#111';
+      ctx.fillRect(ox + 9, 43, 6, 3);
+      ctx.fillRect(ox + 17, 43, 6, 3);
+    } else {
+      // Idle / Interacting / Knocking
+      ctx.fillRect(ox + 10, 33 + breath, 5, 12);
+      ctx.fillRect(ox + 17, 33 + breath, 5, 12);
+      ctx.fillStyle = '#111';
+      ctx.fillRect(ox + 9, 44, 6, 3);
+      ctx.fillRect(ox + 17, 44, 6, 3);
+    }
   }
 
   /**
-   * Genera el spritesheet del guarda (10 frames de 32x48px)
+   * Genera el spritesheet del guarda (14 frames de 32x48px)
+   * Frames: 0-1 idle, 2-7 walk, 8-9 alert, 10-13 knockout
    */
   generateGuardSprite() {
     const canvas = document.createElement('canvas');
-    const fw = 32, fh = 48, frames = 10;
+    const fw = 32, fh = 48, frames = 14;
     canvas.width = fw * frames;
     canvas.height = fh;
     const ctx = canvas.getContext('2d');
@@ -156,63 +224,114 @@ export default class PreloadScene extends Phaser.Scene {
 
   /** Dibuixa un frame del guarda */
   drawGuardFrame(ctx, ox, frame) {
+    const isIdle = (frame === 0 || frame === 1);
+    const isWalking = (frame >= 2 && frame <= 7);
+    const isAlert = (frame >= 8 && frame <= 9);
+    const isKO = (frame >= 10 && frame <= 13);
+
+    if (isKO) {
+      // Animació dramàtica de caiguda (10 a 13)
+      const fallStep = frame - 10; // 0, 1, 2, 3
+      const angle = (fallStep * 30) * Math.PI / 180; // Cau cap enrere
+      
+      ctx.save();
+      // Pivot a la base dels peus
+      ctx.translate(ox + 16, 48);
+      ctx.rotate(-angle);
+      ctx.translate(-(ox + 16), -48);
+      
+      // Cos rotat
+      ctx.fillStyle = '#2c3e6b';
+      ctx.fillRect(ox + 8, 17, 16, 17); // cos
+      ctx.fillRect(ox + 10, 33, 5, 12); // cames
+      ctx.fillRect(ox + 17, 33, 5, 12);
+      ctx.fillStyle = '#d4a574';
+      ctx.fillRect(ox + 10, 7, 12, 10); // cap
+      ctx.fillStyle = '#334455';
+      ctx.fillRect(ox + 8, 2, 16, 5); // gorra
+      
+      // Estrelles de KO girant si ja està completament al terra (frame 13)
+      if (frame === 13) {
+        ctx.fillStyle = '#ffcc00';
+        ctx.fillRect(ox + 0, 0, 2, 2);
+        ctx.fillRect(ox + 6, -4, 2, 2);
+        ctx.fillRect(ox + 12, 0, 2, 2);
+      }
+      ctx.restore();
+      return;
+    }
+
+    // Moviment de cap "mirant" en Idle
+    let headLook = 0;
+    if (isIdle && frame === 1) headLook = 2; // Gira una mica el cap
+
     // Gorra del guarda
     ctx.fillStyle = '#334455';
-    ctx.fillRect(ox + 8, 2, 16, 5);
-    ctx.fillRect(ox + 6, 5, 20, 3);
+    ctx.fillRect(ox + 8 + headLook, 2, 16, 5);
+    ctx.fillRect(ox + 6 + headLook, 5, 20, 3);
 
     // Cap
     ctx.fillStyle = '#d4a574';
-    ctx.fillRect(ox + 10, 7, 12, 10);
+    ctx.fillRect(ox + 10 + headLook, 7, 12, 10);
     // Ulls
     ctx.fillStyle = '#222222';
-    ctx.fillRect(ox + 12, 11, 2, 2);
-    ctx.fillRect(ox + 18, 11, 2, 2);
+    ctx.fillRect(ox + 12 + headLook, 11, 2, 2);
+    ctx.fillRect(ox + 18 + headLook, 11, 2, 2);
 
     // Cos (uniforme blau fosc)
     ctx.fillStyle = '#2c3e6b';
     ctx.fillRect(ox + 8, 17, 16, 17);
     // Insígnia
     ctx.fillStyle = '#ffcc00';
-    ctx.fillRect(ox + 18, 20, 4, 4);
+    ctx.fillRect(ox + 16 + headLook, 20, 4, 4);
+
+    // Braços
+    ctx.fillStyle = '#2c3e6b';
+    if (isWalking) {
+      const armM = Math.sin((frame - 2) * Math.PI / 3) * 3;
+      ctx.fillRect(ox + 4 + armM, 18, 4, 12);
+      ctx.fillRect(ox + 24 - armM, 18, 4, 12);
+    } else if (isAlert) {
+      ctx.fillRect(ox + 4, 18, 4, 6); // braços enlaire / alerta
+      ctx.fillRect(ox + 24, 18, 4, 6);
+    } else {
+      ctx.fillRect(ox + 4, 18, 4, 12);
+      ctx.fillRect(ox + 24, 18, 4, 12);
+    }
 
     // Cinturó
     ctx.fillStyle = '#222233';
     ctx.fillRect(ox + 8, 30, 16, 3);
 
-    // Cames
+    // Cames (pas més fluid 6 frames)
     ctx.fillStyle = '#1a2744';
-    if (frame >= 2 && frame <= 5) {
-      const legOff = Math.sin(frame * 1.5) * 3;
-      ctx.fillRect(ox + 10, 33, 5, 12);
-      ctx.fillRect(ox + 17 + legOff, 33, 5, 12);
-    } else if (frame >= 8) {
-      // Noquejat (estirat al terra)
-      ctx.fillStyle = '#2c3e6b';
-      ctx.fillRect(ox + 4, 30, 24, 8);
-      ctx.fillStyle = '#d4a574';
-      ctx.fillRect(ox + 4, 26, 10, 6);
-      // Estrelles de KO
-      ctx.fillStyle = '#ffcc00';
-      ctx.fillRect(ox + 10, 22, 2, 2);
-      ctx.fillRect(ox + 18, 20, 2, 2);
-      ctx.fillRect(ox + 22, 24, 2, 2);
-      return;
+    if (isWalking) {
+      const step = frame - 2;
+      const leg1X = Math.sin(step * Math.PI / 3) * 4;
+      const leg2X = -Math.sin(step * Math.PI / 3) * 4;
+      const leg1Y = (step === 1 || step === 2) ? -2 : 0;
+      const leg2Y = (step === 4 || step === 5) ? -2 : 0;
+      
+      ctx.fillRect(ox + 10 + leg1X, 33 + leg1Y, 5, 12 - leg1Y);
+      ctx.fillRect(ox + 17 + leg2X, 33 + leg2Y, 5, 12 - leg2Y);
+      // Sabates
+      ctx.fillStyle = '#111122';
+      ctx.fillRect(ox + 9 + leg1X, 44 + leg1Y, 6, 3);
+      ctx.fillRect(ox + 17 + leg2X, 44 + leg2Y, 6, 3);
     } else {
       ctx.fillRect(ox + 10, 33, 5, 12);
       ctx.fillRect(ox + 17, 33, 5, 12);
+      ctx.fillStyle = '#111122';
+      ctx.fillRect(ox + 9, 44, 6, 3);
+      ctx.fillRect(ox + 17, 44, 6, 3);
     }
 
-    // Sabates
-    ctx.fillStyle = '#111122';
-    ctx.fillRect(ox + 9, 44, 6, 3);
-    ctx.fillRect(ox + 17, 44, 6, 3);
-
-    // Signe d'exclamació si és alerta (frames 6-7)
-    if (frame >= 6 && frame <= 7) {
+    // Signe d'exclamació si és alerta
+    if (isAlert) {
+      const alertPulse = frame === 8 ? 0 : 2;
       ctx.fillStyle = '#ff4444';
-      ctx.fillRect(ox + 14, -2, 4, 6);
-      ctx.fillRect(ox + 14, 5, 4, 2);
+      ctx.fillRect(ox + 14, -6 - alertPulse, 4, 8);
+      ctx.fillRect(ox + 14, 4 - alertPulse, 4, 3);
     }
   }
 

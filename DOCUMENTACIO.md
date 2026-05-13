@@ -1,7 +1,7 @@
 # 🕵️‍♂️ SHADOW HEIST - Documentació Tècnica
 
 > **Projecte:** Joc de Sigil i Robatori 2D
-> **Motor:** Phaser 3 | **Llenguatge:** JavaScript (ES6+) | **Construcció:** Vite
+> **Motor:** Phaser 3 | **Llenguatge:** JavaScript + Vite
 
 ---
 
@@ -38,32 +38,32 @@ El codi font està organitzat en petites subcarpetes dins de `/src` per facilita
 
 ### 1. Nucli
 
-* **`main.js`**: Inicia el motor de Phaser, carrega les físiques i enllaça totes les escenes.
-* **`gameConfig.js`**: Centralitza les variables d'ajust (velocitats, con de visió enemics, colors globals).
+- **`main.js`**: Inicia el motor de Phaser, carrega les físiques i enllaça totes les escenes.
+- **`gameConfig.js`**: Centralitza les variables d'ajust (velocitats, con de visió enemics, colors globals).
 
 ### 2. Escenes (`/scenes`)
 
-* **`PreloadScene`**: Crea programàticament els gràfics en memòria (*canvas*) i carrega les cançons.
-* **`MenuScene`** i **`LevelSelectScene`**: Les pantalles d'inici amb fons animats paral·laxi i els botons per seleccionar el nivell a jugar. Inclou el botó de silenciar la música.
-* **`GameScene`**: El motor principal de la partida. Inicia els enemics, calcula les col·lisions (`update`) i respon als controls.
-* **`HUDScene`**: Funciona per sobre de `GameScene` i ens mostra la informació del personatge com la vida, temps o botí actual sense interferir amb el joc base.
+- **`PreloadScene`**: Crea programàticament els gràfics en memòria (*canvas*) i carrega les cançons.
+- **`MenuScene`** i **`LevelSelectScene`**: Les pantalles d'inici amb fons animats paral·laxi i els botons per seleccionar el nivell a jugar. Inclou el botó de silenciar la música.
+- **`GameScene`**: El motor principal de la partida. Inicia els enemics, calcula les col·lisions (`update`) i respon als controls.
+- **`HUDScene`**: Funciona per sobre de `GameScene` i ens mostra la informació del personatge com la vida, temps o botí actual sense interferir amb el joc base.
 
 ### 3. Entitats (`/entities`)
 
-* **`Player.js`**: Lògica de l'avatar principal (caminar, saltar, pujar escales).
-* **`Guard.js`**: La Intel·ligència Artificial enemic. Té rutes (`waypoints`) de patrulla iteratives.
-* **`InteractiveObject.js`**: Gestiona les portes o càmeres quan premem el botó acció (E).
+- **`Player.js`**: Lògica de l'avatar principal (caminar, saltar, pujar escales).
+- **`Guard.js`**: La Intel·ligència Artificial enemic. Té rutes (`waypoints`) de patrulla iteratives.
+- **`InteractiveObject.js`**: Gestiona les portes o càmeres quan premem el botó acció (E).
 
 ### 4. Sistemes (`/systems`)
 
-* **`StealthSystem.js`**: S'encarrega d'analitzar fins a quin punt l'avatar és "il·luminat" o visible.
-* **`DetectionSystem.js`**: Realitza càlculs matemàtics vectorials i de distància per decidir si som vistos o no dins el con de visió.
-* **`MiniGameSystem.js`**: Rep l'input de teclat un cop interagim amb un panell, activant el minijoc temporal per *hackejar* dispositius.
+- **`StealthSystem.js`**: S'encarrega d'analitzar fins a quin punt l'avatar és "il·luminat" o visible.
+- **`DetectionSystem.js`**: Realitza càlculs matemàtics vectorials i de distància per decidir si som vistos o no dins el con de visió.
+- **`MiniGameSystem.js`**: Rep l'input de teclat un cop interagim amb un panell, activant el minijoc temporal per *hackejar* dispositius.
 
 ### 5. Dades i Eines (`/levels`, `/utils`)
 
-* **`LevelManager.js`**: Es on dissenyem els mapes amb coordenades (`x/y`). Només editant aquest fitxer pots afegir nous nivells sense tocar codi del personatge.
-* **`helpers.js`**: Eines vàries per no embrutar els arxius de joc (guarda i llegeix dades al teu navegador web i fa càlculs de radians).
+- **`LevelManager.js`**: Es on dissenyem els mapes amb coordenades (`x/y`). Només editant aquest fitxer pots afegir nous nivells sense tocar codi del personatge.
+- **`helpers.js`**: Eines vàries per no embrutar els arxius de joc (guarda i llegeix dades al teu navegador web i fa càlculs de radians).
 
 ---
 

@@ -94,6 +94,16 @@ export default class GameScene extends Phaser.Scene {
     // === BOTÍ ===
     this.lootItems = this.add.group();
     this.createLoot();
+    
+    // Animar lleugerament el botí (flotant)
+    this.tweens.add({
+      targets: this.lootItems.getChildren(),
+      y: '-=3',
+      duration: 1500,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    });
 
     // === COL·LISIONS ===
     this.setupCollisions();
@@ -320,6 +330,18 @@ export default class GameScene extends Phaser.Scene {
           if (guardFacingRight !== (data.direction === 'left' ? false : true) ||
               (!guardFacingRight && playerOnRight) || (guardFacingRight && !playerOnRight)) {
             guard.knockout();
+            // Afegir una mica de tremolor de càmera per donar pes al cop
+            this.cameras.main.shake(150, 0.005);
+            
+            // Efecte de "Pow!" o impacte visual ràpid
+            const pow = this.add.text(guard.x, guard.y - 20, 'POW!', {
+              fontFamily: '"Press Start 2P", cursive',
+              fontSize: '8px', color: '#ffcc00'
+            }).setOrigin(0.5);
+            this.tweens.add({
+              targets: pow, y: pow.y - 15, alpha: 0, scale: 1.5,
+              duration: 500, onComplete: () => pow.destroy()
+            });
           }
         }
       });

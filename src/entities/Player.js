@@ -66,13 +66,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       s.anims.create({ key: 'player-idle', frames: s.anims.generateFrameNumbers('player-sprite', { start: 0, end: 1 }), frameRate: 2, repeat: -1 });
     }
     if (!s.anims.exists('player-walk')) {
-      s.anims.create({ key: 'player-walk', frames: s.anims.generateFrameNumbers('player-sprite', { start: 2, end: 5 }), frameRate: 8, repeat: -1 });
+      s.anims.create({ key: 'player-walk', frames: s.anims.generateFrameNumbers('player-sprite', { start: 2, end: 7 }), frameRate: 10, repeat: -1 });
     }
     if (!s.anims.exists('player-climb')) {
-      s.anims.create({ key: 'player-climb', frames: s.anims.generateFrameNumbers('player-sprite', { start: 6, end: 7 }), frameRate: 6, repeat: -1 });
+      s.anims.create({ key: 'player-climb', frames: s.anims.generateFrameNumbers('player-sprite', { start: 8, end: 9 }), frameRate: 6, repeat: -1 });
+    }
+    if (!s.anims.exists('player-interact')) {
+      s.anims.create({ key: 'player-interact', frames: s.anims.generateFrameNumbers('player-sprite', { start: 10, end: 11 }), frameRate: 6, repeat: -1 });
     }
     if (!s.anims.exists('player-knockout')) {
-      s.anims.create({ key: 'player-knockout', frames: s.anims.generateFrameNumbers('player-sprite', { start: 8, end: 9 }), frameRate: 10, repeat: 0 });
+      s.anims.create({ key: 'player-knockout', frames: s.anims.generateFrameNumbers('player-sprite', { start: 12, end: 13 }), frameRate: 8, repeat: 0 });
     }
     this.play('player-idle');
   }
@@ -147,6 +150,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   tryInteract() {
     if (this.canInteract && this.nearbyObject) {
       this.state = PLAYER_STATES.INTERACTING;
+      this.play('player-interact', true);
       this.scene.events.emit('player-interact', this.nearbyObject);
     }
   }
@@ -208,7 +212,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   setNearbyObject(obj) { this.nearbyObject = obj; this.canInteract = obj !== null; }
   hide() { this.isHidden = true; this.state = PLAYER_STATES.HIDING; this.setAlpha(0); this.body.setVelocity(0, 0); this.body.setEnable(false); }
   unhide() { this.isHidden = false; this.state = PLAYER_STATES.IDLE; this.setAlpha(1); this.body.setEnable(true); }
-  finishInteraction() { this.state = PLAYER_STATES.IDLE; }
+  finishInteraction() { this.state = PLAYER_STATES.IDLE; this.play('player-idle', true); }
 
   destroy() {
     if (this.stealthIcon) this.stealthIcon.destroy();
